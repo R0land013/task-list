@@ -9,7 +9,7 @@ interface PushButtonProps {
     disabled?: boolean;
 }
 
-type IconName = 'expand' | 'calendar' | 'lock' | 'highlight' | 'estimation';
+type IconName = 'expand' | 'calendar' | 'lock' | 'highlight' | 'estimation' | 'x' | 'save' | 'plus';
 
 const getButtonStyleFromProps = (props: PushButtonProps) => {
 
@@ -23,14 +23,14 @@ const getButtonStyleFromProps = (props: PushButtonProps) => {
     }
 
     else if(props.style === 'ghost') {
-        style = 'border-[1px] border-ghost text-button-text'
+        style = 'more-custom-width:border-[1px] more-custom-width:border-ghost more-custom-width:text-button-text'
     }
 
     if(props.icon) {
-        style = `${style} p-[8px_24px_8px_16px]`;
+        style = `${style} more-custom-width:p-[8px_24px_8px_16px] less-custom-width:p-[6px_6px_6px_6px]`;
     }
     else {
-        style = `${style} p-[13px_24px_13px_24px]`;
+        style = `${style} p-[13px_24px_13px_24px] less-custom-width:p-[6px_6px_6px_6px]`;
     }
 
     return style;
@@ -50,7 +50,7 @@ export default function PushButton(props: PushButtonProps) {
             
             {props.icon && <img src={`assets/icons/${props.icon}.svg`} className="w-[24px]"/>}
             
-            {props.text}
+            <span className="less-custom-width:hidden">{props.text}</span>
         
         </button>
     )

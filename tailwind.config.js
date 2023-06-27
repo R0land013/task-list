@@ -16,7 +16,12 @@ export default {
                 border: '#E7ECEF',
                 primary: '#0D55CF',
                 secondary: '#EAEFF5',
-                ghost: '#C6CDD2'
+                ghost: '#C6CDD2',
+                main: '#FAFBFB',
+            },
+            screens: {
+                'less-custom-width': {max: '1230px'},
+                'more-custom-width': {min: '1231px'}
             }
         },
     },

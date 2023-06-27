@@ -1,6 +1,4 @@
-
 import TaskCard from "./components/TaskCard";
-import Task from "./components/Task";
 
 
 const testTasks = [
@@ -21,7 +19,7 @@ function App() {
             
             {testTasks.map(aTask => {
 
-                return <Task taskId={aTask.id} taskText={aTask.text}/>;
+                return <TaskCard taskId={aTask.id} taskText={aTask.text}/>;
 
             })}
         </div>

@@ -16,10 +16,10 @@ export default function TaskCard(props: TaskCardProps) {
     const trimmedTaskText = taskText?.trim();
     
     return (
-        <div className={isEditorFocused ? 'w-full bg-[#FAFBFB] shadow-[0px_4px_8px_0px] shadow-[#0000000A] drop-shadow-[0px_8px_16px_rgba(0, 0, 0, 0.04)]' : undefined}>
+        <div className={isEditorFocused ? 'w-full bg-main shadow-[0px_4px_8px_0px] shadow-[#0000000A] drop-shadow-[0px_8px_16px_rgba(0, 0, 0, 0.04)]' : undefined}>
 
 
-            <div className={isEditorFocused ? 'border-[1px] border-border rounded-tl-[4px] rounded-tr-[4px] h-10' : undefined}>
+            <div className={isEditorFocused ? 'border-[1px] border-border rounded-tl-[4px] rounded-tr-[4px] pb-4' : undefined}>
                 <div className={isEditorFocused ? 'w-full flex flex-row pl-4 pr-2 pt-2' : undefined}>
                 
                     <div className="w-full flex flex-row gap-3">
@@ -31,7 +31,7 @@ export default function TaskCard(props: TaskCardProps) {
                             onBlur={() => setEditorFocused(false)}
                             className={!isEditorFocused ? 'relative' : undefined}
                             onTextChange={(newText) => setTaskText(newText)}
-                            />
+                            editingTask={!!props.taskId}/>
 
                         <div className={isEditorFocused ? 'visible' : 'hidden'}>
                             <img
@@ -40,14 +40,12 @@ export default function TaskCard(props: TaskCardProps) {
                         </div>
                     </div>
 
-
-                
                 </div>
             </div>
 
 
             <div className={isEditorFocused ? 'flex flex-row justify-between p-2 bg-[#FAFBFB]' : 'hidden'}>
-                <div className="flex flex-row gap-8">
+                <div className="flex flex-row more-custom-width:gap-8 less-custom-width:gap-3">
                     
                     <PushButton
                         style="solid"
@@ -56,7 +54,7 @@ export default function TaskCard(props: TaskCardProps) {
                         icon="expand"
                         disabled={!trimmedTaskText}/>
                     
-                    <div className="flex flex-row gap-1">
+                    <div className="flex flex-row gap-1 less-custom-width:gap-3">
                         <PushButton
                             style="ghost"
                             text="Today"
@@ -89,12 +87,46 @@ export default function TaskCard(props: TaskCardProps) {
                     <PushButton
                         style="solid"
                         color="secondary"
-                        text="Cancel"/>
+                        text="Cancel"
+                        className="less-custom-width:hidden"/>
                     
-                    <PushButton
-                        style="solid"
-                        color="primary"
-                        text={trimmedTaskText ? 'Add' : 'Ok'}/>
+                    
+
+                    {props.taskId ? (
+                        // One of these buttons will be shown while editing an existing task
+                        <>
+                            <PushButton
+                            style="solid"
+                            color="primary"
+                            className="less-custom-width:visible more-custom-width:hidden"
+                            icon={trimmedTaskText ? 'save' : 'x'}/>
+
+                            <PushButton
+                                style="solid"
+                                color="primary"
+                                text={trimmedTaskText ? 'Save' : 'Ok'}
+                                className="less-custom-width:hidden"/>
+                        </>
+                    )
+                    :
+                    (
+                        // One of these buttons will be shown while creating a new task
+                        <>
+                            <PushButton
+                                style="solid"
+                                color="primary"
+                                text={trimmedTaskText ? 'Add' : 'Ok'}
+                                className="less-custom-width:hidden"/>
+                            
+                            <PushButton
+                                style="solid"
+                                color="primary"
+                                className="less-custom-width:visible more-custom-width:hidden"
+                                icon={trimmedTaskText ? 'plus' : 'x'}/>
+                        </>
+                        
+                    )}
+
                 </div>
             </div>
 
