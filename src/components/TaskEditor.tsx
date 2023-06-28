@@ -1,16 +1,18 @@
+import { forwardRef } from "react";
 
 interface TaskEditorProps {
     taskText?: string;
-    onFocused?: () => void;
-    onBlur?: () => void;
     onTextChange?: (newText: string) => void;
     className?: string;
     editingTask?: boolean;
+    onFocused?: () => void;
+    onBlur?: () => void;
 }
 
 
-export default function TaskEditor(props: TaskEditorProps) {
+const TaskEditor = forwardRef<HTMLInputElement, TaskEditorProps>((props: TaskEditorProps, ref) => {
 
+    
     return (
         <div className={`w-full flex flex-row gap-3 ${props.className}`}>
             
@@ -26,6 +28,7 @@ export default function TaskEditor(props: TaskEditorProps) {
             )}
             
             <input
+                ref={ref}
                 className="w-full text-[16px] text-task-text bg-main focus:outline-none caret-[#0C66FF]"
                 type="text"
                 placeholder={props.editingTask ? '' : 'Type to add new task'}
@@ -39,4 +42,6 @@ export default function TaskEditor(props: TaskEditorProps) {
                 onBlur={props.onBlur}/>
         </div>
     )
-}
+});
+
+export default TaskEditor;

@@ -1,19 +1,53 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import PushButton from "./PushButton";
-import TaskEditor from "./TaskEditor";
+import TaskEditor from './TaskEditor';
 
 interface TaskCardProps {
     taskId: number | null;
     taskText?: string;
+    onAddNewTask?: (newTask: {id: number, text: string}) => void;
+    onUpdateTask?: (updatedTask: {id: number, text: string}) => void;
 }
 
+let idForNewTask = 1;
 
 export default function TaskCard(props: TaskCardProps) {
     
     const [isEditorFocused, setEditorFocused] = useState(false);
     const [taskText, setTaskText] = useState(props.taskText);
+    const isUsingThisTaskCardRef = useRef<'notUsing' | 'using' | 'finished'>('notUsing');
+    const taskEditorRef = useRef<HTMLInputElement>(null);
 
     const trimmedTaskText = taskText?.trim();
+
+    const createNewTask = () => {                        
+        
+        if(props.onAddNewTask && trimmedTaskText) {
+            props.onAddNewTask({id: idForNewTask, text: trimmedTaskText ?? ''});
+            idForNewTask++;
+        }
+
+        isUsingThisTaskCardRef.current = 'finished';
+        setTaskText('');
+        leaveTaskCard();
+    };
+
+    const updateTask = () => {
+        if(props.onUpdateTask && trimmedTaskText && props.taskId) {
+            props.onUpdateTask({id: props.taskId, text: trimmedTaskText});
+        }
+        else {
+            setTaskText(props.taskText);
+        }
+
+        isUsingThisTaskCardRef.current = 'finished';
+        leaveTaskCard();
+    };
+
+    const leaveTaskCard = () => {
+        setEditorFocused(false);
+        taskEditorRef.current?.blur();
+    }
     
     return (
         <div className={isEditorFocused ? 'w-full bg-main shadow-[0px_4px_8px_0px] shadow-[#0000000A] drop-shadow-[0px_8px_16px_rgba(0, 0, 0, 0.04)]' : undefined}>
@@ -26,9 +60,24 @@ export default function TaskCard(props: TaskCardProps) {
                         
                         
                         <TaskEditor
-                            taskText={taskText}
-                            onFocused={() => setEditorFocused(true)}
-                            onBlur={() => setEditorFocused(false)}
+                            ref={taskEditorRef}
+                            onFocused={() => {
+                                console.log('focused');
+                                if(isUsingThisTaskCardRef.current === 'notUsing' || isUsingThisTaskCardRef.current === 'using') {
+                                    setEditorFocused(true);
+                                    isUsingThisTaskCardRef.current = 'using'
+                                }
+                            }}
+                            onBlur={() => {
+                                if(isUsingThisTaskCardRef.current === 'using') {
+                                    taskEditorRef.current?.focus();
+                                }
+                                else if(isUsingThisTaskCardRef.current === 'finished') {
+                                    taskEditorRef.current?.blur();
+                                    isUsingThisTaskCardRef.current = 'notUsing';
+                                }
+                            }}
+                            taskText={taskText ?? ''}
                             className={!isEditorFocused ? 'relative' : undefined}
                             onTextChange={(newText) => setTaskText(newText)}
                             editingTask={!!props.taskId}/>
@@ -88,7 +137,14 @@ export default function TaskCard(props: TaskCardProps) {
                         style="solid"
                         color="secondary"
                         text="Cancel"
-                        className="less-custom-width:hidden"/>
+                        className="less-custom-width:hidden"
+                        onPressed={() => {
+                            console.log('Cancel clicked', props.taskText);
+                            
+                            setTaskText(props.taskText);
+                            isUsingThisTaskCardRef.current = 'finished';
+                            leaveTaskCard();
+                        }}/>
                     
                     
 
@@ -99,13 +155,15 @@ export default function TaskCard(props: TaskCardProps) {
                             style="solid"
                             color="primary"
                             className="less-custom-width:visible more-custom-width:hidden"
-                            icon={trimmedTaskText ? 'save' : 'x'}/>
+                            icon={trimmedTaskText ? 'save' : 'x'}
+                            onPressed={updateTask}/>
 
                             <PushButton
                                 style="solid"
                                 color="primary"
                                 text={trimmedTaskText ? 'Save' : 'Ok'}
-                                className="less-custom-width:hidden"/>
+                                className="less-custom-width:hidden"
+                                onPressed={updateTask}/>
                         </>
                     )
                     :
@@ -116,13 +174,16 @@ export default function TaskCard(props: TaskCardProps) {
                                 style="solid"
                                 color="primary"
                                 text={trimmedTaskText ? 'Add' : 'Ok'}
-                                className="less-custom-width:hidden"/>
+                                className="less-custom-width:hidden"
+                                onPressed={createNewTask}
+                                />
                             
                             <PushButton
                                 style="solid"
                                 color="primary"
                                 className="less-custom-width:visible more-custom-width:hidden"
-                                icon={trimmedTaskText ? 'plus' : 'x'}/>
+                                icon={trimmedTaskText ? 'plus' : 'x'}
+                                onPressed={createNewTask}/>
                         </>
                         
                     )}

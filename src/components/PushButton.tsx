@@ -7,6 +7,7 @@ interface PushButtonProps {
     text?: string;
     color?: 'primary' | 'secondary';
     disabled?: boolean;
+    onPressed?: () => void;
 }
 
 type IconName = 'expand' | 'calendar' | 'lock' | 'highlight' | 'estimation' | 'x' | 'save' | 'plus';
@@ -46,7 +47,11 @@ export default function PushButton(props: PushButtonProps) {
     return (
         <button
             className={`flex flex-row gap-[12px] font-medium disabled:opacity-50 items-center rounded-[4px] text-[14px] ${props.className} ${style}`}
-            disabled={props.disabled}>
+            disabled={props.disabled}
+            onClick={() => {
+                if(props.onPressed)
+                    props.onPressed();
+            }}>
             
             {props.icon && <img src={`assets/icons/${props.icon}.svg`} className="w-[24px]"/>}
             
