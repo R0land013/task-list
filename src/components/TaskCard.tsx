@@ -62,7 +62,6 @@ export default function TaskCard(props: TaskCardProps) {
                         <TaskEditor
                             ref={taskEditorRef}
                             onFocused={() => {
-                                console.log('focused');
                                 if(isUsingThisTaskCardRef.current === 'notUsing' || isUsingThisTaskCardRef.current === 'using') {
                                     setEditorFocused(true);
                                     isUsingThisTaskCardRef.current = 'using'
@@ -139,7 +138,6 @@ export default function TaskCard(props: TaskCardProps) {
                         text="Cancel"
                         className="less-custom-width:hidden"
                         onPressed={() => {
-                            console.log('Cancel clicked', props.taskText);
                             
                             setTaskText(props.taskText);
                             isUsingThisTaskCardRef.current = 'finished';

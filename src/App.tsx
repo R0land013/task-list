@@ -4,10 +4,8 @@ import { useState } from "react";
 
 function App() {
     const [tasks, setTasks] = useState<Array<{id: number, text: string}>>([]);
-    console.log('Task', tasks);
+    
     return (
-        
-
         <div className="pl-10 pr-10 pt-14 flex flex-col gap-3">
 
             <TaskCard taskId={null} onAddNewTask={(newTask) => {
@@ -16,7 +14,6 @@ function App() {
             }}/>
             
             {tasks.map(aTask => {
-                console.log("aTask:", aTask);
                 
                 return (
                     <TaskCard
