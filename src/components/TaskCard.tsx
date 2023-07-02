@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import PushButton from "./PushButton";
 
 interface TaskCardProps {
@@ -16,10 +16,18 @@ export default function TaskCard(props: TaskCardProps) {
 
     const [isEditorFocused, setEditorFocused] = useState(false);
     const [taskText, setTaskText] = useState(props.taskText);
+    const [rerenderBeacuseUserResizedWindow, setRerenderBeacuseUserResizeWindow] = useState(false);
     const isUsingThisTaskCardRef = useRef<'notUsing' | 'using' | 'finished'>('notUsing');
     const taskEditorRef = useRef<HTMLInputElement>(null);
 
     const trimmedTaskText = taskText?.trim();
+
+    useEffect(() => {
+        const handleResize = () => setRerenderBeacuseUserResizeWindow((prevState) => !prevState);
+        window.addEventListener('resize', handleResize);
+
+        () => {window.removeEventListener('resize', handleResize)}
+    }, []);
 
     const createNewTask = () => {
 
@@ -162,44 +170,36 @@ export default function TaskCard(props: TaskCardProps) {
 
 
 
-                    {props.taskId ? (
-                        // One of these buttons will be shown while editing an existing task
-                        <>
-                            <PushButton
-                                style="solid"
-                                color="primary"
-                                className="less-custom-width:visible more-custom-width:hidden"
-                                icon={trimmedTaskText ? 'save' : 'x'}
-                                onPressed={updateTask} />
+                    {props.taskId ? (// Button for updating the task
+                        <PushButton
+                            id="update-button"
+                            style="solid"
+                            color="primary"
+                            text={
+                                document.documentElement.clientWidth <= VIEWPORT_BREAKPOINT ? undefined
+                                    : trimmedTaskText ? 'Save' : 'Ok'
+                            }
+                            icon={
+                                document.documentElement.clientWidth > VIEWPORT_BREAKPOINT ? undefined
+                                    : trimmedTaskText ? 'save' : 'x'
+                            }
+                            onPressed={updateTask} />
 
-                            <PushButton
-                                style="solid"
-                                color="primary"
-                                text={trimmedTaskText ? 'Save' : 'Ok'}
-                                className="less-custom-width:hidden"
-                                onPressed={updateTask} />
-                        </>
                     )
-                        :
-                        (
-                            // One of these buttons will be shown while creating a new task
-                            <>
-                                <PushButton
-                                    id="add-button"
-                                    style="solid"
-                                    color="primary"
-                                    text={
-                                        document.documentElement.clientWidth <= VIEWPORT_BREAKPOINT ? undefined
-                                            : trimmedTaskText ? 'Add' : 'Ok'
-                                    }
-                                    icon={document.documentElement.clientWidth > VIEWPORT_BREAKPOINT ? undefined
-                                        : trimmedTaskText ? 'plus' : 'x'}
-                                    onPressed={createNewTask}
-                                />
-
-                            </>
-
-                        )}
+                    :(// Button for adding new task
+                        <PushButton
+                            id="add-button"
+                            style="solid"
+                            color="primary"
+                            text={
+                                document.documentElement.clientWidth <= VIEWPORT_BREAKPOINT ? undefined
+                                    : trimmedTaskText ? 'Add' : 'Ok'
+                            }
+                            icon={document.documentElement.clientWidth > VIEWPORT_BREAKPOINT ? undefined
+                                : trimmedTaskText ? 'plus' : 'x'}
+                            onPressed={createNewTask}
+                        />
+                    )}
 
                 </div>
             </div>
