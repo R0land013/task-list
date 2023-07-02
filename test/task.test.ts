@@ -47,5 +47,35 @@ describe('addingNewTask', () => {
 
         expect(newTaskText).toBe('New Task 1');
     });
-});
 
+
+    test('Edit existent task', async () => {
+        await page.goto('http://localhost:3000');
+        
+        // Adding a new task for editing
+        const newTaskInputText = await page.waitForSelector('#new-task-input', {timeout: 10000});
+        await newTaskInputText?.click();
+        await newTaskInputText?.type('New Task 1');
+
+        const addButton = await page.waitForSelector('#add-button');
+        addButton?.click();
+
+
+        // Editing the task
+        const existentTaskInput = await page.waitForSelector('.existent-task-input');
+        await existentTaskInput?.click();
+        await newTaskInputText?.type(' Edited');
+        
+        const updateButton = await page.waitForSelector('#update-button');
+        await updateButton?.click();
+
+        // Wait for the update to get accomplished
+        await new Promise((resolve) => {
+            setTimeout(resolve, 1000);
+        });
+
+        const editedTaskText = await page?.$eval('.existent-task-input', (element) => (element as HTMLInputElement).value);
+
+        expect(editedTaskText).toBe('New Task 1 Edited');
+    })
+});
