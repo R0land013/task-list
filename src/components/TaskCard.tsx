@@ -1,18 +1,19 @@
 import { useState, useRef } from "react";
 import PushButton from "./PushButton";
-import TaskEditor from './TaskEditor';
 
 interface TaskCardProps {
     taskId: number | null;
     taskText?: string;
-    onAddNewTask?: (newTask: {id: number, text: string}) => void;
-    onUpdateTask?: (updatedTask: {id: number, text: string}) => void;
+    onAddNewTask?: (newTask: { id: number, text: string }) => void;
+    onUpdateTask?: (updatedTask: { id: number, text: string }) => void;
 }
 
 let idForNewTask = 1;
 
+const VIEWPORT_BREAKPOINT = 1230;
+
 export default function TaskCard(props: TaskCardProps) {
-    
+
     const [isEditorFocused, setEditorFocused] = useState(false);
     const [taskText, setTaskText] = useState(props.taskText);
     const isUsingThisTaskCardRef = useRef<'notUsing' | 'using' | 'finished'>('notUsing');
@@ -20,10 +21,10 @@ export default function TaskCard(props: TaskCardProps) {
 
     const trimmedTaskText = taskText?.trim();
 
-    const createNewTask = () => {                        
-        
-        if(props.onAddNewTask && trimmedTaskText) {
-            props.onAddNewTask({id: idForNewTask, text: trimmedTaskText ?? ''});
+    const createNewTask = () => {
+
+        if (props.onAddNewTask && trimmedTaskText) {
+            props.onAddNewTask({ id: idForNewTask, text: trimmedTaskText ?? '' });
             idForNewTask++;
         }
 
@@ -33,8 +34,8 @@ export default function TaskCard(props: TaskCardProps) {
     };
 
     const updateTask = () => {
-        if(props.onUpdateTask && trimmedTaskText && props.taskId) {
-            props.onUpdateTask({id: props.taskId, text: trimmedTaskText});
+        if (props.onUpdateTask && trimmedTaskText && props.taskId) {
+            props.onUpdateTask({ id: props.taskId, text: trimmedTaskText });
         }
         else {
             setTaskText(props.taskText);
@@ -48,44 +49,59 @@ export default function TaskCard(props: TaskCardProps) {
         setEditorFocused(false);
         taskEditorRef.current?.blur();
     }
-    
+
     return (
         <div className={isEditorFocused ? 'w-full bg-main shadow-[0px_4px_8px_0px] shadow-[#0000000A] drop-shadow-[0px_8px_16px_rgba(0, 0, 0, 0.04)]' : undefined}>
 
 
             <div className={isEditorFocused ? 'border-[1px] border-border rounded-tl-[4px] rounded-tr-[4px] pb-4' : undefined}>
                 <div className={isEditorFocused ? 'w-full flex flex-row pl-4 pr-2 pt-2' : undefined}>
-                
-                    <div className="w-full flex flex-row gap-3">
-                        
-                        
-                        <TaskEditor
-                            ref={taskEditorRef}
-                            onFocused={() => {
-                                if(isUsingThisTaskCardRef.current === 'notUsing' || isUsingThisTaskCardRef.current === 'using') {
-                                    setEditorFocused(true);
-                                    isUsingThisTaskCardRef.current = 'using'
-                                }
-                            }}
-                            onBlur={() => {
-                                if(isUsingThisTaskCardRef.current === 'using') {
-                                    taskEditorRef.current?.focus();
-                                }
-                                else if(isUsingThisTaskCardRef.current === 'finished') {
-                                    taskEditorRef.current?.blur();
-                                    isUsingThisTaskCardRef.current = 'notUsing';
-                                }
-                            }}
-                            taskText={taskText ?? ''}
-                            className={!isEditorFocused ? 'relative' : undefined}
-                            onTextChange={(newText) => setTaskText(newText)}
-                            editingTask={!!props.taskId}/>
 
-                        <div className={isEditorFocused ? 'visible' : 'hidden'}>
-                            <img
-                                src="https://github.com/r0land013.png?size=24"
-                                className="rounded-full"/>
+                    <div className="w-full flex flex-row gap-3">
+
+                        <div className={`w-full flex flex-row gap-3`}>
+
+                            {!!props.taskId ? (
+                                <input
+                                    className="w-[24px] rounded-[1px] border-button-text"
+                                    type="checkbox" />
+                            ) :
+                                (
+                                    <img
+                                        className="flex flex-row items-center justify-center w-[24px]"
+                                        src="/assets/icons/add.svg" />
+                                )}
+
+                            <input
+                                id="new-task-input"
+                                ref={taskEditorRef}
+                                className={`w-full text-[16px] text-task-text focus:bg-main focus:outline-none caret-[#0C66FF] ${props.taskId ? 'existent-task-input' : ''}`}
+                                type="text"
+                                placeholder={'Type to add new task'}
+                                onChange={(event) => setTaskText(event.target.value)}
+                                value={taskText}
+                                onFocus={() => {
+                                    if (isUsingThisTaskCardRef.current === 'notUsing' || isUsingThisTaskCardRef.current === 'using') {
+                                        setEditorFocused(true);
+                                        isUsingThisTaskCardRef.current = 'using'
+                                    }
+                                }}
+                                onBlur={() => {
+                                    if (isUsingThisTaskCardRef.current === 'using') {
+                                        taskEditorRef.current?.focus();
+                                    }
+                                    else if (isUsingThisTaskCardRef.current === 'finished') {
+                                        taskEditorRef.current?.blur();
+                                        isUsingThisTaskCardRef.current = 'notUsing';
+                                    }
+                                }} />
                         </div>
+                    </div>
+
+                    <div className={isEditorFocused ? 'visible' : 'hidden'}>
+                        <img
+                            src="https://github.com/r0land013.png?size=24"
+                            className="rounded-full" />
                     </div>
 
                 </div>
@@ -94,40 +110,40 @@ export default function TaskCard(props: TaskCardProps) {
 
             <div className={isEditorFocused ? 'flex flex-row justify-between p-2 bg-[#FAFBFB]' : 'hidden'}>
                 <div className="flex flex-row more-custom-width:gap-8 less-custom-width:gap-3">
-                    
+
                     <PushButton
                         style="solid"
                         color="secondary"
                         text="Open"
                         icon="expand"
-                        disabled={!trimmedTaskText}/>
-                    
+                        disabled={!trimmedTaskText} />
+
                     <div className="flex flex-row gap-1 less-custom-width:gap-3">
                         <PushButton
                             style="ghost"
                             text="Today"
                             icon="calendar"
-                            disabled={!trimmedTaskText}/>
-                        
+                            disabled={!trimmedTaskText} />
+
                         <PushButton
                             style="ghost"
                             text="Public"
                             icon="lock"
-                            disabled={!trimmedTaskText}/>
-                        
+                            disabled={!trimmedTaskText} />
+
                         <PushButton
                             style="ghost"
                             text="Highlight"
                             icon="highlight"
-                            disabled={!trimmedTaskText}/>
-                        
+                            disabled={!trimmedTaskText} />
+
                         <PushButton
                             style="ghost"
                             text="Estimation"
                             icon="estimation"
-                            disabled={!trimmedTaskText}/>
+                            disabled={!trimmedTaskText} />
                     </div>
-                    
+
 
                 </div>
 
@@ -138,53 +154,52 @@ export default function TaskCard(props: TaskCardProps) {
                         text="Cancel"
                         className="less-custom-width:hidden"
                         onPressed={() => {
-                            
+
                             setTaskText(props.taskText);
                             isUsingThisTaskCardRef.current = 'finished';
                             leaveTaskCard();
-                        }}/>
-                    
-                    
+                        }} />
+
+
 
                     {props.taskId ? (
                         // One of these buttons will be shown while editing an existing task
                         <>
                             <PushButton
-                            style="solid"
-                            color="primary"
-                            className="less-custom-width:visible more-custom-width:hidden"
-                            icon={trimmedTaskText ? 'save' : 'x'}
-                            onPressed={updateTask}/>
+                                style="solid"
+                                color="primary"
+                                className="less-custom-width:visible more-custom-width:hidden"
+                                icon={trimmedTaskText ? 'save' : 'x'}
+                                onPressed={updateTask} />
 
                             <PushButton
                                 style="solid"
                                 color="primary"
                                 text={trimmedTaskText ? 'Save' : 'Ok'}
                                 className="less-custom-width:hidden"
-                                onPressed={updateTask}/>
+                                onPressed={updateTask} />
                         </>
                     )
-                    :
-                    (
-                        // One of these buttons will be shown while creating a new task
-                        <>
-                            <PushButton
-                                style="solid"
-                                color="primary"
-                                text={trimmedTaskText ? 'Add' : 'Ok'}
-                                className="less-custom-width:hidden"
-                                onPressed={createNewTask}
+                        :
+                        (
+                            // One of these buttons will be shown while creating a new task
+                            <>
+                                <PushButton
+                                    id="add-button"
+                                    style="solid"
+                                    color="primary"
+                                    text={
+                                        document.documentElement.clientWidth <= VIEWPORT_BREAKPOINT ? undefined
+                                            : trimmedTaskText ? 'Add' : 'Ok'
+                                    }
+                                    icon={document.documentElement.clientWidth > VIEWPORT_BREAKPOINT ? undefined
+                                        : trimmedTaskText ? 'plus' : 'x'}
+                                    onPressed={createNewTask}
                                 />
-                            
-                            <PushButton
-                                style="solid"
-                                color="primary"
-                                className="less-custom-width:visible more-custom-width:hidden"
-                                icon={trimmedTaskText ? 'plus' : 'x'}
-                                onPressed={createNewTask}/>
-                        </>
-                        
-                    )}
+
+                            </>
+
+                        )}
 
                 </div>
             </div>

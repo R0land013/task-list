@@ -1,6 +1,7 @@
 
 
 interface PushButtonProps {
+    id?: string;
     className?: string;
     style: 'ghost' | 'solid';
     icon?: IconName;
@@ -46,6 +47,7 @@ export default function PushButton(props: PushButtonProps) {
     
     return (
         <button
+            id={props.id}
             className={`flex flex-row gap-[12px] font-medium disabled:opacity-50 items-center rounded-[4px] text-[14px] ${props.className} ${style}`}
             disabled={props.disabled}
             onClick={() => {

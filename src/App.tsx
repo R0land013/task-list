@@ -8,10 +8,12 @@ function App() {
     return (
         <div className="pl-10 pr-10 pt-14 flex flex-col gap-3">
 
-            <TaskCard taskId={null} onAddNewTask={(newTask) => {
-                const updatedTasks = [newTask, ...tasks];
-                setTasks(updatedTasks);
-            }}/>
+            <TaskCard
+                taskId={null}
+                onAddNewTask={(newTask) => {
+                    const updatedTasks = [newTask, ...tasks];
+                    setTasks(updatedTasks);
+                }}/>
             
             {tasks.map(aTask => {
                 
