@@ -16,7 +16,7 @@ export default function TaskCard(props: TaskCardProps) {
 
     const [isEditorFocused, setEditorFocused] = useState(false);
     const [taskText, setTaskText] = useState(props.taskText);
-    const [rerenderBeacuseUserResizedWindow, setRerenderBeacuseUserResizeWindow] = useState(false);
+    const setRerenderBeacuseUserResizeWindow = useState(false)[1];
     const isUsingThisTaskCardRef = useRef<'notUsing' | 'using' | 'finished'>('notUsing');
     const taskEditorRef = useRef<HTMLInputElement>(null);
 
